@@ -64,14 +64,14 @@ function renderers(cfg, data) {
     usage5h: () => {
       if (!data.has5h) return null;
       const cd = formatCountdown(data.reset5h, cfg.countdownFormat);
-      const tail = cd ? ` ${cfg.icons.resetArrow || ''}${cd}` : ' 5h';
+      const tail = cd ? ` ${cfg.resetLabel}${cd}` : ' 5h';
       return `${icon('usage5h', cfg)}${bar(data.usage5h, cfg)} ${BOLD}${data.usage5h}%${RESET}${DIM}${tail}${RESET}`;
     },
 
     usage7d: () => {
       if (!data.has7d) return null;
       const cd = formatCountdown(data.reset7d, cfg.countdownFormat);
-      const tail = cd ? ` ${cfg.icons.resetArrow || ''}${cd}` : ' 7d';
+      const tail = cd ? ` ${cfg.resetLabel}${cd}` : ' 7d';
       return `${icon('usage7d', cfg)}${bar(data.usage7d, cfg)} ${BOLD}${data.usage7d}%${RESET}${DIM}${tail}${RESET}`;
     },
 
@@ -105,18 +105,67 @@ function renderers(cfg, data) {
   };
 }
 
-function renderLine(sectionKeys, cfg, data) {
+// Strip ANSI codes to measure visible length
+const ANSI_REGEX = /\x1b\[[0-9;]*m/g;
+function visibleLength(str) {
+  return str.replace(ANSI_REGEX, '').length;
+}
+
+function buildSections(sectionKeys, cfg, data) {
   const r = renderers(cfg, data);
-  const sep = `${CODES.dim}${cfg.separator}${CODES.reset}`;
   const parts = [];
   for (const key of sectionKeys) {
     if (cfg.show[key] === false) continue;
     const fn = r[key];
     if (!fn) continue;
     const val = fn();
-    if (val) parts.push(val);
+    if (val) parts.push({ key, value: val });
   }
-  return parts.length > 0 ? parts.join(sep) : null;
+  return parts;
 }
 
-module.exports = { renderLine, formatTokens, formatCountdown };
+function renderLine(sectionKeys, cfg, data) {
+  const parts = buildSections(sectionKeys, cfg, data);
+  const sep = `${CODES.dim}${cfg.separator}${CODES.reset}`;
+  return parts.length > 0 ? parts.map(p => p.value).join(sep) : null;
+}
+
+function renderResponsiveLines(cfg, data, maxWidth) {
+  const sepVisible = cfg.separator.length;
+  const priority = cfg.responsive?.priority || [];
+
+  function buildLine(lineKeys) {
+    const parts = buildSections(lineKeys, cfg, data);
+    if (parts.length === 0) return { line: null, width: 0, parts };
+    const sep = `${CODES.dim}${cfg.separator}${CODES.reset}`;
+    const line = parts.map(p => p.value).join(sep);
+    const width = parts.reduce((acc, p) => acc + visibleLength(p.value), 0)
+      + Math.max(0, parts.length - 1) * sepVisible;
+    return { line, width, parts };
+  }
+
+  function trimToWidth(lineKeys) {
+    let current = [...lineKeys];
+    let result = buildLine(current);
+    if (maxWidth <= 0 || result.width <= maxWidth) return result.line;
+
+    // Priority: items later in priority[] are dropped first
+    const priorityRank = new Map(priority.map((k, i) => [k, i]));
+    const droppable = [...current].sort((a, b) =>
+      (priorityRank.get(b) ?? 999) - (priorityRank.get(a) ?? 999)
+    );
+
+    for (const key of droppable) {
+      if (result.width <= maxWidth) break;
+      current = current.filter(k => k !== key);
+      result = buildLine(current);
+    }
+    return result.line;
+  }
+
+  const line1 = trimToWidth(cfg.line1);
+  const line2 = trimToWidth(cfg.line2);
+  return { line1, line2 };
+}
+
+module.exports = { renderLine, renderResponsiveLines, formatTokens, formatCountdown, visibleLength };

@@ -4,8 +4,20 @@ const path = require('path');
 const os = require('os');
 
 const { loadConfig } = require('./config');
-const { renderLine } = require('./render');
+const { renderLine, renderResponsiveLines } = require('./render');
 const { collectStats } = require('./stats');
+
+function getTerminalWidth() {
+  if (process.stdout && typeof process.stdout.columns === 'number' && process.stdout.columns > 0) {
+    return process.stdout.columns;
+  }
+  if (process.stderr && typeof process.stderr.columns === 'number' && process.stderr.columns > 0) {
+    return process.stderr.columns;
+  }
+  const env = parseInt(process.env.COLUMNS || '', 10);
+  if (Number.isFinite(env) && env > 0) return env;
+  return 0;
+}
 
 function gitBranch(cwd) {
   try {
@@ -125,8 +137,19 @@ function main() {
       ...rates,
     };
 
-    const line1 = renderLine(cfg.line1, cfg, viewData);
-    const line2 = renderLine(cfg.line2, cfg, viewData);
+    let line1, line2;
+    const responsive = cfg.responsive?.enabled !== false;
+    const manualWidth = cfg.responsive?.maxWidth || 0;
+
+    if (manualWidth === -1 || !responsive) {
+      line1 = renderLine(cfg.line1, cfg, viewData);
+      line2 = renderLine(cfg.line2, cfg, viewData);
+    } else {
+      const detected = manualWidth > 0 ? manualWidth : getTerminalWidth();
+      const result = renderResponsiveLines(cfg, viewData, detected);
+      line1 = result.line1;
+      line2 = result.line2;
+    }
 
     const out = [line1, line2].filter(Boolean).join('\n') + '\n';
     process.stdout.write(out);

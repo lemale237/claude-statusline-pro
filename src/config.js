@@ -75,6 +75,21 @@ const DEFAULTS = {
   // Show elapsed/remaining time format: "full" (2d 4h), "short" (2d), "hms" (2d4h0m)
   countdownFormat: 'full',
 
+  // Label before the countdown value (e.g. "reset in ", "↻", "→ ")
+  resetLabel: 'reset in ',
+
+  // Responsive behavior: hide sections progressively when terminal is too narrow
+  responsive: {
+    enabled: true,
+    // Priority order (sections listed LATER are hidden FIRST when narrow)
+    priority: [
+      'model', 'context', 'usage5h', 'usage7d', 'directory', 'gitBranch',
+      'agents', 'tools', 'files', 'mcps', 'successRate', 'cache',
+    ],
+    // Manual override: maxWidth in columns. 0 = auto-detect, -1 = no responsive
+    maxWidth: 0,
+  },
+
   // Number formatting: "short" (1.2k), "full" (1,200)
   tokenFormat: 'short',
 

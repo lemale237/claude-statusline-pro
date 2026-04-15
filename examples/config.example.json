@@ -62,8 +62,18 @@
 
   "separator": " • ",
   "countdownFormat": "full",
+  "resetLabel": "reset in ",
   "tokenFormat": "short",
   "statsScope": "project",
+
+  "responsive": {
+    "enabled": true,
+    "priority": [
+      "model", "context", "usage5h", "usage7d", "directory", "gitBranch",
+      "agents", "tools", "files", "mcps", "successRate", "cache"
+    ],
+    "maxWidth": 0
+  },
 
   "line1": ["model", "context", "usage5h", "usage7d", "directory", "gitBranch"],
   "line2": ["agents", "tools", "files", "mcps", "successRate", "cache"]

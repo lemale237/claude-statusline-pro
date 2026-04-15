@@ -133,11 +133,26 @@ You can also set `CLAUDE_STATUSLINE_CONFIG=/path/to/your/config.json` to use a c
   // Countdown format: "full" → "2d 4h", "short" → "2d", "hms" → "2d4h0m"
   "countdownFormat": "full",
 
+  // Label shown before the countdown (e.g. "reset in ", "↻", "→ ")
+  "resetLabel": "reset in ",
+
   // Token format: "short" → "1.2k", "full" → "1,200"
   "tokenFormat": "short",
 
   // Stats aggregation: "project" (current project) or "global" (all projects)
   "statsScope": "project",
+
+  // Responsive: hide sections progressively when terminal is too narrow.
+  // Items appearing LATER in `priority` are hidden FIRST.
+  // maxWidth: 0 = auto-detect, -1 = disable responsive, >0 = force width
+  "responsive": {
+    "enabled": true,
+    "priority": [
+      "model", "context", "usage5h", "usage7d", "directory", "gitBranch",
+      "agents", "tools", "files", "mcps", "successRate", "cache"
+    ],
+    "maxWidth": 0
+  },
 
   // Section order & visibility (sections not listed are hidden)
   "line1": ["model", "context", "usage5h", "usage7d", "directory", "gitBranch"],

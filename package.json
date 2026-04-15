@@ -1,6 +1,6 @@
 {
   "name": "claude-statusline-pro",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "🎨 Beautiful customizable statusline for Claude Code — progress bars, icons, git, MCP tracking, usage limits, session stats",
   "keywords": [
     "claude",
