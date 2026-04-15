@@ -1,0 +1,8 @@
+.github/
+.gitignore
+examples/sample-input.json
+*.log
+.DS_Store
+.env
+.vscode/
+.idea/

@@ -1,0 +1,55 @@
+{
+  "name": "claude-statusline-pro",
+  "version": "1.0.0",
+  "description": "🎨 Beautiful customizable statusline for Claude Code — progress bars, icons, git, MCP tracking, usage limits, session stats",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "claude-ai",
+    "statusline",
+    "status-bar",
+    "cli-tool",
+    "terminal",
+    "developer-tools",
+    "productivity",
+    "ai-tools",
+    "customize",
+    "progress-bar"
+  ],
+  "homepage": "https://github.com/lemale237/claude-statusline-pro#readme",
+  "bugs": {
+    "url": "https://github.com/lemale237/claude-statusline-pro/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lemale237/claude-statusline-pro.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "lemale237",
+    "email": "kamtsou1997@gmail.com",
+    "url": "https://github.com/lemale237"
+  },
+  "main": "src/statusline.js",
+  "bin": {
+    "claude-statusline-pro": "bin/cli.js"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node src/statusline.js < examples/sample-input.json"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ]
+}

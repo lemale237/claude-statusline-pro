@@ -1,0 +1,70 @@
+{
+  "show": {
+    "model": true,
+    "context": true,
+    "usage5h": true,
+    "usage7d": true,
+    "directory": true,
+    "gitBranch": true,
+    "agents": true,
+    "tools": true,
+    "files": true,
+    "mcps": true,
+    "successRate": true,
+    "cache": true
+  },
+
+  "thresholds": {
+    "warning": 60,
+    "critical": 85
+  },
+
+  "colors": {
+    "normal": "green",
+    "warning": "yellow",
+    "critical": "red",
+    "model": "cyan",
+    "directory": "magenta",
+    "gitBranch": "green",
+    "agents": "blue",
+    "tools": "yellow",
+    "files": "cyan",
+    "mcps": "green",
+    "cache": "magenta",
+    "successGood": "green",
+    "successMid": "yellow",
+    "successBad": "red"
+  },
+
+  "bar": {
+    "width": 10,
+    "fillChar": "█",
+    "emptyChar": "░",
+    "emptyColor": "gray"
+  },
+
+  "iconsEnabled": true,
+  "icons": {
+    "model": "🧠",
+    "context": "📊",
+    "usage5h": "⏱ ",
+    "usage7d": "📅",
+    "directory": "📁",
+    "gitBranch": "🌿",
+    "agents": "🤖",
+    "tools": "🔧",
+    "files": "📝",
+    "mcps": "🔌",
+    "successRate": "✅",
+    "cache": "💾",
+    "resetArrow": "↻"
+  },
+
+  "separator": " • ",
+  "countdownFormat": "full",
+  "tokenFormat": "short",
+  "statsScope": "project",
+
+  "line1": ["model", "context", "usage5h", "usage7d", "directory", "gitBranch"],
+  "line2": ["agents", "tools", "files", "mcps", "successRate", "cache"]
+}
