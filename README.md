@@ -151,7 +151,8 @@ You can also set `CLAUDE_STATUSLINE_CONFIG=/path/to/your/config.json` to use a c
       "model", "context", "usage5h", "usage7d", "directory", "gitBranch",
       "agents", "tools", "files", "mcps", "successRate", "cache"
     ],
-    "maxWidth": 0
+    "maxWidth": 0,       // 0 = auto-detect, -1 = disable
+    "rightReserve": 5    // chars reserved on the right for Claude Code UI
   },
 
   // Section order & visibility (sections not listed are hidden)

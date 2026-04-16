@@ -26,9 +26,11 @@ function install() {
   existing.statusLine = {
     type: 'command',
     command: `node "${SCRIPT_PATH}"`,
+    refreshInterval: 2,
   };
   writeJson(SETTINGS_PATH, existing);
   log('✅ Statusline installed in ' + SETTINGS_PATH);
+  log('   refreshInterval: 2s (picks up terminal resize)');
   log('');
   log('Restart Claude Code to see the statusline.');
   log('');

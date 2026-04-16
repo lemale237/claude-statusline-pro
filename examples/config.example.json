@@ -72,7 +72,8 @@
       "model", "context", "usage5h", "usage7d", "directory", "gitBranch",
       "agents", "tools", "files", "mcps", "successRate", "cache"
     ],
-    "maxWidth": 0
+    "maxWidth": 0,
+    "rightReserve": 5
   },
 
   "line1": ["model", "context", "usage5h", "usage7d", "directory", "gitBranch"],

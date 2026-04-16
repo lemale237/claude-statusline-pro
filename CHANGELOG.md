@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-04-16
+
+### Added
+- **Real terminal width detection** in subprocess context:
+  - Windows: runs `mode con` via `cmd` and parses the columns line (charset-safe)
+  - Unix: walks parent PIDs to find the real TTY and runs `stty size`
+  - Fallbacks: `tput cols`, `COLUMNS` env var
+- **Right reserve** config option (`responsive.rightReserve`, default 5) — leaves space for Claude Code's own UI on the right.
+- `install` command now writes `refreshInterval: 2` so the statusline re-runs every 2 seconds, picking up terminal resize events.
+
+### Fixed
+- Statusline now responds to window resize (via `refreshInterval`) instead of only updating on assistant messages.
+
 ## [1.1.0] — 2026-04-16
 
 ### Added

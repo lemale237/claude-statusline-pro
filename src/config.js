@@ -88,6 +88,9 @@ const DEFAULTS = {
     ],
     // Manual override: maxWidth in columns. 0 = auto-detect, -1 = no responsive
     maxWidth: 0,
+    // Chars to reserve on the right for Claude Code's own UI (version notices, etc.)
+    // Increase if you see your statusline getting truncated
+    rightReserve: 5,
   },
 
   // Number formatting: "short" (1.2k), "full" (1,200)

@@ -3,9 +3,62 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
+const { execSync } = require('child_process');
 const { loadConfig } = require('./config');
 const { renderLine, renderResponsiveLines } = require('./render');
 const { collectStats } = require('./stats');
+
+function safeExec(cmd) {
+  try {
+    return execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'], timeout: 200 }).toString();
+  } catch {
+    return null;
+  }
+}
+
+function getWindowsWidth() {
+  const out = safeExec('cmd /c mode con');
+  if (!out) return 0;
+  // Match Columns/Colonnes/etc. — any word followed by optional chars then a number
+  // on a line that's NOT the Lines/Lignes one (which is typically a huge number like 9001)
+  const lines = out.split(/\r?\n/);
+  let lineIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(/^\s*\S+\S*\s*:\s*(\d+)\s*$/);
+    if (m) {
+      lineIdx++;
+      // First numeric line is usually Lines/Lignes, second is Columns/Colonnes
+      if (lineIdx === 1) return parseInt(m[1], 10);
+    }
+  }
+  return 0;
+}
+
+function getUnixWidth() {
+  // Walk up parent PIDs to find a real TTY
+  let pid = process.ppid;
+  for (let i = 0; i < 8 && pid; i++) {
+    const info = safeExec(`ps -o ppid=,tty= -p ${pid}`);
+    if (!info) break;
+    const parts = info.trim().split(/\s+/);
+    const ppid = parseInt(parts[0], 10);
+    const tty = parts[1];
+    if (tty && tty !== '?' && tty !== '??') {
+      const size = safeExec(`stty size < /dev/${tty}`);
+      if (size) {
+        const w = parseInt(size.trim().split(/\s+/)[1], 10);
+        if (w > 0) return w;
+      }
+    }
+    pid = ppid;
+  }
+  const tput = safeExec('tput cols');
+  if (tput) {
+    const w = parseInt(tput.trim(), 10);
+    if (w > 0) return w;
+  }
+  return 0;
+}
 
 function getTerminalWidth() {
   if (process.stdout && typeof process.stdout.columns === 'number' && process.stdout.columns > 0) {
@@ -16,7 +69,10 @@ function getTerminalWidth() {
   }
   const env = parseInt(process.env.COLUMNS || '', 10);
   if (Number.isFinite(env) && env > 0) return env;
-  return 0;
+
+  // Subprocess fallback: probe the actual terminal
+  const detected = process.platform === 'win32' ? getWindowsWidth() : getUnixWidth();
+  return detected || 0;
 }
 
 function gitBranch(cwd) {
@@ -146,7 +202,9 @@ function main() {
       line2 = renderLine(cfg.line2, cfg, viewData);
     } else {
       const detected = manualWidth > 0 ? manualWidth : getTerminalWidth();
-      const result = renderResponsiveLines(cfg, viewData, detected);
+      const reserve = cfg.responsive?.rightReserve ?? 5;
+      const effective = detected > 0 ? Math.max(30, detected - reserve) : 0;
+      const result = renderResponsiveLines(cfg, viewData, effective);
       line1 = result.line1;
       line2 = result.line2;
     }
